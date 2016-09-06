@@ -10,7 +10,7 @@
  * @subpackage Decks/classes/views
  */
 
-wp_nonce_field( $this->plugin_name, 'nonce_Decks_subtitle' );
+wp_nonce_field( DECKS_SLUG, 'nonce_Decks_subtitle' );
 
 $atts 					= array();
 $atts['class'] 			= 'widefat';
@@ -28,10 +28,10 @@ if ( ! empty( $this->meta[$atts['id']][0] ) ) {
 
 }
 
-$atts = apply_filters( $this->plugin_name . '_field_subtitle', $atts );
+$atts = apply_filters( DECKS_SLUG . '_field_subtitle', $atts );
 
 ?><p><?php
 
-include( plugin_dir_path( dirname( __FILE__ ) ) . 'fields/text.php' );
+include(  plugin_dir_url( dirname( __FILE__ ) ) . 'fields/text.php' );
 
 ?></p>

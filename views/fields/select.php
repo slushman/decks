@@ -9,12 +9,22 @@
  * @package    Decks
  * @subpackage Decks/classes/views
  */
+$defaults['aria'] 			= __( '', 'decks' );
+$defaults['blank'] 			= __( '- Select -', 'decks' );
+$defaults['class'] 			= 'widefat';
+$defaults['description'] 	= __( '', 'decks' );
+$defaults['id'] 			= '';
+$defaults['label'] 			= __( '', 'decks' );
+$defaults['name'] 			= '';
+$defaults['selections'] 	= array();
+$defaults['value'] 			= '';
+$atts 						= wp_parse_args( $atts, $defaults );
 
-if ( ! empty( $atts['label'] ) ) {
+if ( ! empty( $atts['label'] ) ) :
 
 	?><label for="<?php echo esc_attr( $atts['id'] ); ?>"><?php echo wp_kses( $atts['label'], array( 'code' => array() ) ); ?>: </label><?php
 
-}
+endif;
 
 ?><select
 	aria-label="<?php echo wp_kses( $atts['aria'], array( 'code' => array() ) ); ?>"
@@ -32,17 +42,8 @@ if ( ! empty( $atts['selections'] ) ) {
 
 	foreach ( $atts['selections'] as $selection ) {
 
-		if ( is_array( $selection ) ) {
-
-			$label = $selection['label'];
-			$value = $selection['value'];
-
-		} else {
-
-			$label = $selection;
-			$value = sanitize_title( $selection );
-
-		}
+		$label = ( is_array( $selection ) ? $selection['label'] : $selection );
+		$value = ( is_array( $selection ) ? $selection['value'] : sanitize_title( $selection ) );
 
 		?><option
 			value="<?php echo esc_attr( $value ); ?>" <?php

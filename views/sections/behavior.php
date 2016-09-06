@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Provides the markup for a section in the plugin settings
+ * Provides the markup for the behavior section in the plugin settings.
  *
  * @link 		http://wpdecks.com
  * @since 		1.0.0

@@ -1,21 +1,20 @@
 <?php
 
 /**
- * Provides the markup for any text field
+ * Provides the markup for a date picker field
  *
- * @link       http://wpdecks.com
+ * @link       http://example.com
  * @since      1.0.0
  *
  * @package    Decks
- * @subpackage Decks/classes/views
+ * @subpackage Decks/views/fields
  */
-$defaults['class'] 			= 'widefat';
-$defaults['description'] 	= __( '', 'decks' );
+$defaults['class'] 			= '';
+$defaults['description'] 	= __( '', 'text-domain' );
 $defaults['id'] 			= '';
-$defaults['label'] 			= __( '', 'decks' );
+$defaults['label'] 			= __( '', 'text-domain' );
 $defaults['name'] 			= '';
-$defaults['pick'] 			= '';
-$defaults['placeholder'] 	= __( '', 'decks' );
+$defaults['placeholder'] 	= __( 'Select date', 'text-domain' );
 $defaults['type'] 			= 'text';
 $defaults['value'] 			= '';
 $atts 						= wp_parse_args( $atts, $defaults );
@@ -26,8 +25,9 @@ if ( ! empty( $atts['label'] ) ) :
 
 endif;
 
-?><input
-	class="<?php echo esc_attr( $atts['class'] ); ?>"<?php
+?><span class="dashicons dashicons-calendar-alt date-field-icon"></span>
+<input
+	class="field-date <?php echo esc_attr( $atts['class'] ); ?>"<?php
 
 	if ( ! empty( $atts['data'] ) ) {
 
@@ -39,14 +39,9 @@ endif;
 
 	}
 
-	if ( ! empty( $atts['pick'] ) ) {
-
-		?> pick="<?php echo esc_attr( $atts['id'] ); ?>"<?php
-
-	}
-
 	?> id="<?php echo esc_attr( $atts['id'] ); ?>"
 	name="<?php echo esc_attr( $atts['name'] ); ?>"
+	pick="date"
 	placeholder="<?php echo esc_attr( $atts['placeholder'] ); ?>"
 	type="<?php echo esc_attr( $atts['type'] ); ?>"
 	value="<?php echo esc_attr( $atts['value'] ); ?>" />

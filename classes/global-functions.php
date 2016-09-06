@@ -9,6 +9,56 @@
  * @subpackage 	Decks/classes
  */
 
+ /**
+  * Returns a post object of the requested post type
+  *
+  * @param 	string 		$post 			The name of the post type
+  * @param   array 		$params 		Optional parameters
+  *
+  * @return 	object 		A post object
+  */
+ function decks_get_posts( $post, $params = array(), $cache = '' ) {
+
+ 	if ( empty( $post ) ) { return -1; }
+
+ 	$return = '';
+ 	$cache_name = 'posts';
+
+ 	if ( ! empty( $cache ) ) {
+
+ 		$cache_name = '' . $cache . '_posts';
+
+ 	}
+
+ 	$return = wp_cache_get( $cache_name, 'posts' );
+
+ 	if ( false === $return ) {
+
+ 		$args['post_type'] 				= $post;
+ 		$args['post_status'] 			= 'publish';
+ 		$args['order_by'] 				= 'date';
+ 		$args['posts_per_page'] 		= 200;
+ 		$args['no_found_rows']			= true;
+ 		$args['update_post_meta_cache'] = false;
+ 		$args['update_post_term_cache'] = false;
+
+ 		$args 	= wp_parse_args( $params, $args );
+ 		$query 	= new WP_Query( $args );
+
+ 		if ( ! is_wp_error( $query ) && $query->have_posts() ) {
+
+ 			wp_cache_set( $cache_name, $query, 'posts', 5 * MINUTE_IN_SECONDS );
+
+ 			$return = $query;
+
+ 		}
+
+ 	}
+
+ 	return $return;
+
+} // decks_get_posts()
+
 /**
  * Returns the requested SVG
  *
@@ -70,17 +120,15 @@ function decks_get_template( $name, $location = '' ) {
 	$locations 	= apply_filters( 'decks_template_paths', $locations );
 	$template 	= locate_template( $locations, TRUE );
 
-	if ( empty( $template ) ) {
+	if ( ! empty( $template ) ) { return $template; }
 
-		if ( empty( $location ) ) {
+	if ( empty( $location ) ) {
 
-			$template = plugin_dir_path( dirname( __FILE__ ) ) . 'views/' . $name . '.php';
+		$template = plugin_dir_path( dirname( __FILE__ ) ) . 'views/' . $name . '.php';
 
-		} else {
+	} else {
 
-			$template = plugin_dir_path( dirname( __FILE__ ) ) . 'views/' . $location . '/' . $name . '.php';
-
-		}
+		$template = plugin_dir_path( dirname( __FILE__ ) ) . 'views/' . $location . '/' . $name . '.php';
 
 	}
 

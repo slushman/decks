@@ -10,39 +10,14 @@
  * @subpackage 	Decks/classes
  */
 
-class Decks_Shared {
-
-	/**
-	 * The ID of this plugin.
-	 *
-	 * @since 		1.0.0
-	 * @access 		private
-	 * @var 		string 			$plugin_name 		The ID of this plugin.
-	 */
-	private $plugin_name;
-
-	/**
-	 * The version of this plugin.
-	 *
-	 * @since 		1.0.0
-	 * @access 		private
-	 * @var 		string 			$version 		The current version of this plugin.
-	 */
-	private $version;
+class Decks_Query {
 
 	/**
 	 * Initialize the class and set its properties.
 	 *
 	 * @since 		1.0.0
-	 * @var 		string 			$plugin_name 			The name of this plugin.
-	 * @var 		string 			$version 				The version of this plugin.
 	 */
-	public function __construct( $plugin_name, $version ) {
-
-		$this->plugin_name 	= $plugin_name;
-		$this->version 		= $version;
-
-	} // __construct()
+	public function __construct() {} // __construct()
 
 	/**
 	 * Returns a cache name based on the attributes.
@@ -56,17 +31,17 @@ class Decks_Shared {
 
 		if ( empty( $args ) ) { return ''; }
 
-		$return = $this->plugin_name . '_decks';
+		$return = DECKS_SLUG . '_decks';
 
 		if ( ! empty( $cache ) ) {
 
-			$return = $this->plugin_name . $cache . '_decks';
+			$return = DECKS_SLUG . $cache . '_decks';
 
 		}
 
 		if ( ! empty( $args['presentation'] ) ) {
 
-			$return = $this->plugin_name . $cache . $args['presentation'] . '_decks';
+			$return = DECKS_SLUG . $cache . $args['presentation'] . '_decks';
 
 		}
 
@@ -91,21 +66,21 @@ class Decks_Shared {
 
 		$return 	= '';
 		$cache_name = $this->get_cache_name( $params, $cache );
-		$return 	= wp_cache_get( $cache_name, $this->plugin_name . '_posts' );
+		$return 	= wp_cache_get( $cache_name, DECKS_SLUG . '_posts' );
 
 		if ( false === $return ) {
 
-			$args = apply_filters( $this->plugin_name . '_query_args', $this->set_args( $params ) );
+			$args = apply_filters( DECKS_SLUG . '_query_args', $this->set_args( $params ) );
 			$query 	= new WP_Query( $args );
 
 			if ( is_wp_error( $query ) && empty( $query ) ) {
 
-				$options 	= get_option( $this->plugin_name . '-options' );
+				$options 	= get_option( DECKS_SLUG . '-options' );
 				$return 	= $options['none-found-message'];
 
 			} else {
 
-				wp_cache_set( $cache_name, $query, $this->plugin_name . '_posts', 5 * MINUTE_IN_SECONDS );
+				wp_cache_set( $cache_name, $query, DECKS_SLUG . '_posts', 5 * MINUTE_IN_SECONDS );
 
 				$return = $query->posts;
 

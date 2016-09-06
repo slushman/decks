@@ -1,21 +1,21 @@
 <?php
 
 /**
- * Provides the markup for any text field
+ * Provides the markup for a color picker field.
  *
  * @link       http://wpdecks.com
  * @since      1.0.0
  *
  * @package    Decks
- * @subpackage Decks/classes/views
+ * @subpackage Decks/views/fields
  */
 $defaults['class'] 			= 'widefat';
-$defaults['description'] 	= __( '', 'decks' );
+$defaults['description'] 	= __( '', 'text-domain' );
 $defaults['id'] 			= '';
-$defaults['label'] 			= __( '', 'decks' );
+$defaults['label'] 			= __( '', 'text-domain' );
 $defaults['name'] 			= '';
 $defaults['pick'] 			= '';
-$defaults['placeholder'] 	= __( '', 'decks' );
+$defaults['placeholder'] 	= __( '', 'text-domain' );
 $defaults['type'] 			= 'text';
 $defaults['value'] 			= '';
 $atts 						= wp_parse_args( $atts, $defaults );
@@ -27,7 +27,8 @@ if ( ! empty( $atts['label'] ) ) :
 endif;
 
 ?><input
-	class="<?php echo esc_attr( $atts['class'] ); ?>"<?php
+	class="color-picker <?php echo esc_attr( $atts['class'] ); ?>"
+	data-alpha="true"<?php
 
 	if ( ! empty( $atts['data'] ) ) {
 
@@ -47,6 +48,7 @@ endif;
 
 	?> id="<?php echo esc_attr( $atts['id'] ); ?>"
 	name="<?php echo esc_attr( $atts['name'] ); ?>"
+	pick="color	"
 	placeholder="<?php echo esc_attr( $atts['placeholder'] ); ?>"
 	type="<?php echo esc_attr( $atts['type'] ); ?>"
 	value="<?php echo esc_attr( $atts['value'] ); ?>" />

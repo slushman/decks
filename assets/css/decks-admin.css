@@ -1,4 +1,1 @@
-/**
- * All of the CSS for your admin-specific functionality should be
- * included in this file.
- */
+.image-upload-preview{background-repeat:no-repeat;background-position:50%;background-size:cover;height:150px;width:150px}.image-upload-preview.bordered{border:4px dashed #b4b9be}.hide{display:none;opacity:0;visibility:hidden}.field-error{background-color:#dc3232;color:#fff;font-weight:700;padding:.5em}.date-field-icon,.time-field-icon{background-color:#f7f7f7;border:1px solid #ddd;border-radius:3px 0 0 3px;height:23px;margin-right:-6px;padding-right:2px;width:23px}.field-date,.field-time{margin:0}

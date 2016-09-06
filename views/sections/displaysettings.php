@@ -10,4 +10,4 @@
  * @subpackage 	Decks/views
  */
 
-?><p><?php esc_html_e( '', 'decks' ); ?></p>
+?><p id="<?php echo esc_attr( $params['id'] ); ?>"><?php esc_html_e( '', 'decks' ); ?></p>

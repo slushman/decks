@@ -15,32 +15,9 @@
 class Decks_CPT_Slide {
 
 	/**
-	 * The ID of this plugin.
-	 *
-	 * @since    1.0.0
-	 * @access   private
-	 * @var      string    $plugin_name    The ID of this plugin.
-	 */
-	private $plugin_name;
-
-	/**
-	 * The version of this plugin.
-	 *
-	 * @since    1.0.0
-	 * @access   private
-	 * @var      string    $version    The current version of this plugin.
-	 */
-	private $version;
-
-	/**
 	 * Constructor
 	 */
-	public function __construct( $plugin_name, $version ) {
-
-		$this->plugin_name 	= $plugin_name;
-		$this->version 		= $version;
-
-	} // __construct()
+	public function __construct() {} // __construct()
 
 	/**
 	 * Registers additional image sizes
@@ -215,7 +192,7 @@ class Decks_CPT_Slide {
 		$opts['rewrite']['ep_mask']						= EP_PERMALINK;
 		$opts['rewrite']['feeds']						= FALSE;
 		$opts['rewrite']['pages']						= TRUE;
-		$opts['rewrite']['slug']						= esc_html__( 'Slide', 'decks' );
+		$opts['rewrite']['slug']						= esc_html__( 'slide', 'decks' );
 		$opts['rewrite']['with_front']					= TRUE;
 
 		$opts = apply_filters( 'decks_cpt_slide_options', $opts );

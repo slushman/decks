@@ -15,32 +15,9 @@
 class Decks_Tax_Presentation {
 
 	/**
-	 * The ID of this plugin.
-	 *
-	 * @since    1.0.0
-	 * @access   private
-	 * @var      string    $plugin_name    The ID of this plugin.
-	 */
-	private $plugin_name;
-
-	/**
-	 * The version of this plugin.
-	 *
-	 * @since    1.0.0
-	 * @access   private
-	 * @var      string    $version    The current version of this plugin.
-	 */
-	private $version;
-
-	/**
 	 * Constructor
 	 */
-	public function __construct( $plugin_name, $version ) {
-
-		$this->plugin_name 	= $plugin_name;
-		$this->version 		= $version;
-
-	} // __construct()
+	public function __construct() {} // __construct()
 
 	/**
 	 * Creates a new taxonomy for a custom post type

@@ -12,12 +12,15 @@
  * @subpackage Decks/classes/views
  */
 
-?><h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
-<form method="post" action="options.php"><?php
+?><h1><?php echo esc_html( get_admin_page_title() ); ?></h1><?php
 
-settings_fields( $this->plugin_name . '-options' );
+echo $this->sections_menu();
 
-do_settings_sections( $this->plugin_name );
+?><form method="post" action="options.php"><?php
+
+settings_fields( DECKS_SLUG . '-options' );
+
+do_settings_sections( DECKS_SLUG );
 
 submit_button( 'Save Settings' );
 

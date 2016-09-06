@@ -1,18 +1,4 @@
 <?php
-
-/**
- * The file that defines the core plugin class
- *
- * A class definition that includes attributes and functions used across both the
- * public-facing side of the site and the admin area.
- *
- * @link 		http://wpdecks.com
- * @since 		1.0.0
- *
- * @package 	Decks
- * @subpackage 	Decks/classes
- */
-
 /**
  * The core plugin class.
  *
@@ -22,12 +8,22 @@
  * Also maintains the unique identifier of this plugin as well as the current
  * version of the plugin.
  *
+ * @link 		http://wpdecks.com
  * @since 		1.0.0
  * @package 	Decks
  * @subpackage 	Decks/classes
  * @author 		Slushman <chris@slushman.com>
  */
 class Decks {
+
+	/**
+	 * The current version of the plugin.
+	 *
+	 * @since    1.0.0
+	 * @access   protected
+	 * @var      Decks 	$_instance 		Instance singleton.
+	 */
+	protected static $_instance;
 
 	/**
 	 * The loader that's responsible for maintaining and registering all hooks that power
@@ -40,27 +36,8 @@ class Decks {
 	protected $loader;
 
 	/**
-	 * The unique identifier of this plugin.
-	 *
-	 * @since    1.0.0
-	 * @access   protected
-	 * @var      string    $plugin_name    The string used to uniquely identify this plugin.
-	 */
-	protected $plugin_name;
-
-	/**
-	 * The current version of the plugin.
-	 *
-	 * @since    1.0.0
-	 * @access   protected
-	 * @var      string    $version    The current version of the plugin.
-	 */
-	protected $version;
-
-	/**
 	 * Define the core functionality of the plugin.
 	 *
-	 * Set the Decks and the plugin version that can be used throughout the plugin.
 	 * Load the dependencies, define the locale, and set the hooks for the admin area and
 	 * the public-facing side of the site.
 	 *
@@ -68,13 +45,12 @@ class Decks {
 	 */
 	public function __construct() {
 
-		$this->plugin_name 	= 'decks';
-		$this->version 		= '1.0.0';
-
 		$this->load_dependencies();
 		$this->set_locale();
+		$this->define_customizer_hooks();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
+		$this->define_shortcode_hooks();
 		$this->define_template_hooks();
 		$this->define_metabox_hooks();
 		$this->define_cpt_and_tax_hooks();
@@ -83,13 +59,6 @@ class Decks {
 
 	/**
 	 * Load the required dependencies for this plugin.
-	 *
-	 * Include the following files that make up the plugin:
-	 *
-	 * - Decks_Loader. Orchestrates the hooks of the plugin.
-	 * - Decks_i18n. Defines internationalization functionality.
-	 * - Decks_Admin. Defines all hooks for the admin area.
-	 * - Decks_Public. Defines all hooks for the public side of the site.
 	 *
 	 * Create an instance of the loader which will be used to register the hooks
 	 * with WordPress.
@@ -100,65 +69,11 @@ class Decks {
 	private function load_dependencies() {
 
 		/**
-		 * The class responsible for orchestrating the actions and filters of the
-		 * core plugin.
-		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'classes/class-loader.php';
-
-		/**
-		 * The class responsible for defining internationalization functionality
-		 * of the plugin.
-		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'classes/class-i18n.php';
-
-		/**
-		 * The class responsible for sanitizing user input
-		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'classes/class-sanitizer.php';
-
-		/**
-		 * The class responsible for defining all actions that occur in the admin area.
-		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'classes/class-admin.php';
-
-		/**
-		 * The class responsible for defining all actions that occur in the public-facing
-		 * side of the site.
-		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'classes/class-public.php';
-
-		/**
-		 * The class responsible for defining all actions relating to metaboxes.
-		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'classes/class-metaboxes.php';
-
-		/**
-		 * The class responsible for defining all actions relating to the slide custom post type.
-		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'classes/class-cpt-slide.php';
-
-		/**
-		 * The class responsible for defining all actions relating to the Presentation taxonomy.
-		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'classes/class-tax-presentation.php';
-
-		/**
-		 * The class responsible for defining all actions creating the templates.
-		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'classes/class-templates.php';
-
-		/**
 		 * The class responsible for all global functions.
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'classes/global-functions.php';
 
-		/**
-		 * The class with methods shared by admin and public
-		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'classes/class-shared.php';
-
-		$this->loader 		= new Decks_Loader();
-		$this->sanitizer 	= new Decks_Sanitize();
+		$this->loader = new Decks_Loader();
 
 	} // load_dependencies()
 
@@ -188,7 +103,7 @@ class Decks {
 	 */
 	private function define_admin_hooks() {
 
-		$plugin_admin = new Decks_Admin( $this->get_plugin_name(), $this->get_version() );
+		$plugin_admin = new Decks_Admin();
 
 		$this->loader->action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
@@ -209,7 +124,7 @@ class Decks {
 	 */
 	private function define_cpt_and_tax_hooks() {
 
-		$plugin_cpt_slide = new Decks_CPT_Slide( $this->get_plugin_name(), $this->get_version() );
+		$plugin_cpt_slide = new Decks_CPT_Slide();
 
 		$this->loader->action( 'init', $plugin_cpt_slide, 'new_cpt_slide' );
 		$this->loader->filter( 'manage_slide_posts_columns', $plugin_cpt_slide, 'slide_register_columns' );
@@ -218,11 +133,33 @@ class Decks {
 		$this->loader->action( 'request', $plugin_cpt_slide, 'slide_order_sorting', 10, 2 );
 		$this->loader->action( 'init', $plugin_cpt_slide, 'add_image_sizes' );
 
-		$plugin_tax_presentation =new Decks_Tax_Presentation( $this->get_plugin_name(), $this->get_version() );
+
+
+		$plugin_tax_presentation =new Decks_Tax_Presentation();
 
 		$this->loader->action( 'init', $plugin_tax_presentation, 'new_taxonomy_presentation' );
 
 	} // define_cpt_and_tax_hooks()
+
+	/**
+	 * Register all of the hooks related to the Customizer.
+	 *
+	 * @since 		1.0.0
+	 * @access 		private
+	 */
+	private function define_customizer_hooks() {
+
+		$theme_customizer = new Decks_Customizer();
+
+		$this->loader->action( 'customize_register', 					$theme_customizer, 'register_panels' );
+		$this->loader->action( 'customize_register', 					$theme_customizer, 'register_sections' );
+		$this->loader->action( 'customize_register', 					$theme_customizer, 'register_fields' );
+		$this->loader->action( 'wp_head', 								$theme_customizer, 'header_output' );
+		$this->loader->action( 'customize_preview_init', 				$theme_customizer, 'live_preview' );
+		$this->loader->action( 'customize_controls_enqueue_scripts', 	$theme_customizer, 'control_scripts' );
+		//$this->loader->action( 'customize_register', 					$theme_customizer, 'load_customize_controls', 0 );
+
+	} // define_customizer_hooks()
 
 	/**
 	 * Register all of the hooks related to metaboxes
@@ -232,13 +169,19 @@ class Decks {
 	 */
 	private function define_metabox_hooks() {
 
-		$plugin_metaboxes = new Decks_Admin_Metaboxes( $this->get_plugin_name(), $this->get_version() );
+		$metaboxes = array( 'Background' );
 
-		$this->loader->action( 'add_meta_boxes_slide', $plugin_metaboxes, 'add_metaboxes' );
-		$this->loader->action( 'save_post_slide', $plugin_metaboxes, 'validate_meta', 10, 2 );
-		//$this->loader->action( 'edit_form_after_title', $plugin_metaboxes, 'metabox_subtitle', 10, 2 );
-		$this->loader->action( 'add_meta_boxes_slide', $plugin_metaboxes, 'set_meta' );
-		$this->loader->filter( 'post_type_labels_slide', $plugin_metaboxes, 'change_featured_image_labels', 10, 1 );
+		foreach ( $metaboxes as $box ) {
+
+			$class 	= 'Decks_Metabox_' . $box;
+			$box 	= new $class();
+
+			$this->loader->action( 'add_meta_boxes', 		$box, 'add_metaboxes', 10, 2 );
+			$this->loader->action( 'add_meta_boxes', 		$box, 'set_meta', 10, 2 );
+			$this->loader->action( 'save_post', 			$box, 'validate_meta', 10, 2 );
+			$this->loader->action( 'edit_form_after_title', $box, 'promote_metaboxes', 10, 1 );
+
+		}
 
 	} // define_metabox_hooks()
 
@@ -251,13 +194,40 @@ class Decks {
 	 */
 	private function define_public_hooks() {
 
-		$plugin_public = new Decks_Public( $this->get_plugin_name(), $this->get_version() );
+		$plugin_public = new Decks_Public();
 
+		$this->loader->action( 'wp_print_scripts', $plugin_public, 'dequeue_scripts', 99 );
+		$this->loader->action( 'wp_print_styles', $plugin_public, 'dequeue_styles', 99 );
 		$this->loader->action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
-		$this->loader->filter( 'single_template', $plugin_public, 'single_cpt_template', 11 );
+		$this->loader->filter( 'template_include', $plugin_public, 'presentation_template' );
+		$this->loader->filter( 'decks_slides', $plugin_public, 'get_slides' );
+		$this->loader->filter( 'decks_initialize', $plugin_public, 'initialize_settings' );
 
 	} // define_public_hooks()
+
+	/**
+	 * Registers hooks for shortcodes.
+	 *
+	 * @since    1.0.0
+	 * @access   private
+	 */
+	private function define_shortcode_hooks() {
+
+		$shortcodes = array( 'slidestep', 'slidecode', 'slidenotes' );
+
+		foreach ( $shortcodes as $shortcode ) {
+
+			$class 			= 'Decks_Shortcode_' . $shortcode;
+			$shortcode_obj 	= new $class();
+			$function 		= strtolower( $shortcode );
+
+			$this->loader->shortcode( $function, $shortcode_obj, 'shortcode_' . $function );
+			$this->loader->action( $function, $shortcode_obj, 'shortcode_' . $function );
+
+		}
+
+	} // define_shortcode_hooks()
 
 	/**
 	 * Register all of the hooks related to the templates.
@@ -267,7 +237,7 @@ class Decks {
 	 */
 	private function define_template_hooks() {
 
-		$plugin_templates = new Decks_Templates( $this->get_plugin_name(), $this->get_version() );
+		$plugin_templates = new Decks_Templates();
 
 		// Loop
 		$this->loader->action( 'decks-before-loop', 			$plugin_templates, 'loop_wrap_begin', 10, 1 );
@@ -294,29 +264,22 @@ class Decks {
 	} // define_template_hooks()
 
 	/**
-	 * Run the loader to execute all of the hooks with WordPress.
+	 * Get instance of main class
 	 *
-	 * @since    1.0.0
+	 * @since 		1.0.0
+	 * @return 		Plugin_Name
 	 */
-	public function run() {
+	public static function get_instance() {
 
-		$this->loader->run();
+		if ( empty( self::$_instance ) ) {
 
-	} // run()
+			self::$_instance = new self;
 
-	/**
-	 * The name of the plugin used to uniquely identify it within the context of
-	 * WordPress and to define internationalization functionality.
-	 *
-	 * @since     1.0.0
-	 *
-	 * @return    string    The name of the plugin.
-	 */
-	public function get_plugin_name() {
+		}
 
-		return $this->plugin_name;
+		return self::$_instance;
 
-	} // get_Decks()
+	} // get_instance()
 
 	/**
 	 * The reference to the class that orchestrates the hooks with the plugin.
@@ -332,16 +295,14 @@ class Decks {
 	} // get_loader()
 
 	/**
-	 * Retrieve the version number of the plugin.
+	 * Run the loader to execute all of the hooks with WordPress.
 	 *
-	 * @since     1.0.0
-	 *
-	 * @return    string    The version number of the plugin.
+	 * @since    1.0.0
 	 */
-	public function get_version() {
+	public function run() {
 
-		return $this->version;
+		$this->loader->run();
 
-	} // get_version()
+	} // run()
 
 } // class

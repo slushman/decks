@@ -1,4 +1,1 @@
-/**
- * All of the CSS for your public-facing functionality should be
- * included in this file.
- */
+.menu-sections li{display:inline-block}.menu-sections li:not(:first-child){margin-left:1em}

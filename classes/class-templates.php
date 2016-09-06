@@ -54,32 +54,12 @@ class Decks_Templates {
 	private $options;
 
 	/**
-	 * The ID of this plugin.
-	 *
-	 * @since 		1.0.0
-	 * @access 		private
-	 * @var 		string 			$plugin_name 		The ID of this plugin.
-	 */
-	private $plugin_name;
-
-	/**
-	 * The version of this plugin.
-	 *
-	 * @since 		1.0.0
-	 * @access 		private
-	 * @var 		string 			$version 			The current version of this plugin.
-	 */
-	private $version;
-
-	/**
 	 * Initialize the class and set its properties.
 	 *
 	 * @since 		1.0.0
 	 */
-	public function __construct( $plugin_name, $version ) {
+	public function __construct() {
 
-		$this->plugin_name 	= $plugin_name;
-		$this->version 		= $version;
 		self::$_this 		= $this;
 
 		$this->set_options();
@@ -249,7 +229,7 @@ class Decks_Templates {
 	 */
 	private function set_options() {
 
-		$this->options = get_option( $this->plugin_name . '-options' );
+		$this->options = get_option( DECKS_SLUG . '-options' );
 
 	} // set_options()
 
@@ -304,7 +284,7 @@ class Decks_Templates {
 	 * Returns a reference to this class. Used for removing
 	 * actions and/or filters declared here.
 	 *
-	 * @see  	http://hardcorewp.com/2012/enabling-action-and-filter-hook-removal-from-class-based-wordpress-plugins/
+	 * @see 	http://hardcorewp.com/2012/enabling-action-and-filter-hook-removal-from-class-based-wordpress-plugins/
 	 * @return 	object 		This class
 	 */
 	static function this() {

@@ -14,11 +14,7 @@ class Decks_Sanitize {
 	/**
 	 * Constructor
 	 */
-	public function __construct() {
-
-		// Nothing to see here...
-
-	} // __construct()
+	public function __construct() {}
 
 	/**
 	 * Cleans the data
@@ -55,7 +51,7 @@ class Decks_Sanitize {
 		/**
 		 * Add additional santization before the default sanitization
 		 */
-		do_action( 'decks_pre_sanitize', $sanitized );
+		do_action( 'decks-pre-sanitize', $sanitized );
 
 		switch ( $type ) {
 
@@ -88,7 +84,7 @@ class Decks_Sanitize {
 		/**
 		 * Add additional santization after the default .
 		 */
-		do_action( 'decks_post_sanitize', $sanitized );
+		do_action( 'decks-post-sanitize', $sanitized );
 
 		return $sanitized;
 

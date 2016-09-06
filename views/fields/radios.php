@@ -4,7 +4,9 @@
  * Provides the markup for a set of radios
  *
  * $atts:
- *	class
+ *	class-fieldset 	Class for the fieldset wrapper.
+ *	class-input 	Class for the input fields themselves (all of them).
+ *	class-label 	Class for the label around each input (all of them).
  *	description 	Description of the set for the legend tag
  * 	id
  * 	name
@@ -21,54 +23,55 @@
  * @package    Decks
  * @subpackage Decks/classes/views
  */
+$defaults['class-fieldset'] = '';
+$defaults['class-input'] 	= '';
+$defaults['class-label'] 	= '';
+$defaults['description'] 	= __( '', 'decks' );
+$defaults['name'] 			= '';
+$defaults['selections'] 	= array();
+$defaults['value'] 			= '';
+$defaults['wrap-tag'] 		= '';
+$atts 						= wp_parse_args( $atts, $defaults );
 
-?><fieldset role="radiogroup" class="wrap-radios"><?php
+?><fieldset class="wrap-radios <?php echo esc_attr( $atts['class-fieldset'] ); ?>" role="radiogroup" >
+	<legend class="description"><?php echo wp_kses( $atts['description'], array( 'code' => array() ) ); ?></legend><?php
 
-if ( ! empty( $atts['description'] ) ) {
+	foreach ( $atts['selections'] as $selection ) {
 
-	?><legend class="description"><?php echo wp_kses( $atts['description'], array( 'code' => array() ) ); ?></legend><?php
+		$label = ( is_array( $selection ) ? $selection['label'] : $selection );
+		$value = ( is_array( $selection ) ? $selection['value'] : sanitize_title( $selection ) );
 
-}
+		if ( ! empty( $atts['wrap-tag'] ) ) {
 
-foreach ( $atts['selections'] as $selection ) {
+			echo '<' . esc_attr( $atts['wrap-tag'] ) . '>';
 
-	if ( is_array( $selection ) ) {
+		}
 
-		$label = $selection['label'];
-		$value = $selection['value'];
 
-	} else {
 
-		$label = $selection;
-		$value = strtolower( $selection );
+		?><label class="<?php echo esc_attr( $atts['class-label'] ); ?>" for="<?php echo esc_attr( $value ); ?>">
+			<input <?php
 
-	}
+				checked( $value, $atts['value'], true );
 
-	if ( ! empty( $atts['wrap-tag'] ) ) {
+				?>class="<?php echo esc_attr( $atts['class-input'] ); ?>"
+				id="<?php echo esc_attr( $value ); ?>"
+				name="<?php echo esc_attr( $atts['name'] ); ?>"
+				type="radio"
+				value="<?php echo esc_attr( $value ); ?>" />
+			<span class=""><?php
 
-		echo '<' . esc_attr( $atts['wrap-tag'] ) . '>';
+				echo wp_kses( $label, array( 'code' => array() ) );
 
-	}
+			?></span>
+		</label><?php
 
-	?><label for="<?php echo esc_attr( $atts['id'] ); ?>">
-		<input aria-role="radio"
-			<?php checked( $value, $atts['value'], true ); ?>
-			class="<?php echo esc_attr( $atts['class'] ); ?>"
-			id="<?php echo esc_attr( $atts['id'] ); ?>"
-			name="<?php echo esc_attr( $atts['name'] ); ?>"
-			type="radio"
-			value="<?php echo esc_attr( $value ); ?>" /> <?php
+		if ( ! empty( $atts['wrap-tag'] ) ) {
 
-			echo wp_kses( $label, array( 'code' => array() ) );
+			echo '</' . esc_attr( $atts['wrap-tag'] ) . '>';
 
-	?></label><?php
+		}
 
-	if ( ! empty( $atts['wrap-tag'] ) ) {
-
-		echo '</' . esc_attr( $atts['wrap-tag'] ) . '>';
-
-	}
-
-} // foreach
+	} // foreach
 
 ?></fieldset>

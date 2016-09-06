@@ -9,12 +9,21 @@
  * @package    Decks
  * @subpackage Decks/classes/views
  */
+$defaults['class'] 			= 'large-text';
+$defaults['cols'] 			= 50;
+$defaults['description'] 	= __( '', 'decks' );
+$defaults['id'] 			= '';
+$defaults['label'] 			= __( '', 'decks' );
+$defaults['name'] 			= '';
+$defaults['rows'] 			= 10;
+$defaults['value'] 			= '';
+$atts 						= wp_parse_args( $atts, $defaults );
 
-if ( ! empty( $atts['label'] ) ) {
+if ( ! empty( $atts['label'] ) ) :
 
 	?><label for="<?php echo esc_attr( $atts['id'] ); ?>"><?php echo wp_kses( $atts['label'], array( 'code' => array() ) ); ?>: </label><?php
 
-}
+endif;
 
 ?><textarea
 	class="<?php echo esc_attr( $atts['class'] ); ?>"
