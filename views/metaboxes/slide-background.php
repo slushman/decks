@@ -41,7 +41,8 @@ unset( $atts );
 
 
 
-<div class="" id="fields-transition"><?php
+<fieldset class="bg-fields" id="fields-transition">
+	<legend><?php esc_html_e( 'Transition Settings', 'decks' ); ?></legend><?php
 
 	$atts['aria'] 			= esc_html__( 'Select transition style.', 'decks' );
 	$atts['class'] 			= '';
@@ -104,11 +105,12 @@ unset( $atts );
 	unset( $atts );
 
 	?></p>
-</div>
+</fieldset>
 
 
 
-<div class="bg-fields" id="fields-color"><?php
+<fieldset class="bg-fields" id="fields-color">
+	<legend><?php esc_html_e( 'Color Settings', 'decks' ); ?></legend><?php
 
 	$atts['id'] 			= 'bg-color';
 	$atts['label'] 			= __( 'Background Color', 'decks' );
@@ -128,11 +130,12 @@ unset( $atts );
 	unset( $atts );
 
 	?></p>
-</div>
+</fieldset>
 
 
 
-<div class="bg-fields" id="fields-image">
+<fieldset class="bg-fields" id="fields-image">
+	<legend><?php esc_html_e( 'Image Settings', 'decks' ); ?></legend>
 	<p>The <a href="https://css-tricks.com/almanac/properties/b/background-position/">position</a>, <a href="https://css-tricks.com/almanac/properties/b/background-size/">size</a>, and <a href="https://css-tricks.com/almanac/properties/b/background-repeat/">repeat</a> fields use any of the respective CSS properties. See the links for acceptable values.</p><?php
 
 	$atts['id'] 			= 'bgsize';
@@ -195,11 +198,12 @@ unset( $atts );
 	unset( $atts );
 
 	?></p>
-</div>
+</fieldset>
 
 
 
-<div class="bg-fields" id="fields-video"><?php
+<fieldset class="bg-fields" id="fields-video">
+	<legend><?php esc_html_e( 'Video Settings', 'decks' ); ?></legend><?php
 
 	$atts['id'] 			= 'video-url';
 	$atts['label'] 			= esc_html__( 'Video URL', 'decks' );
@@ -266,11 +270,12 @@ unset( $atts );
 	unset( $atts );
 
 	?></p>
-</div>
+</fieldset>
 
 
 
-<div class="bg-fields" id="fields-iframe"><?php
+<fieldset class="bg-fields" id="fields-iframe">
+	<legend><?php esc_html_e( 'iFrame Settings', 'decks' ); ?></legend><?php
 
 	$atts['id'] 			= 'iframe-url';
 	$atts['label'] 			= esc_html__( 'iframe URL', 'decks' );
@@ -291,4 +296,4 @@ unset( $atts );
 	unset( $atts );
 
 	?></p>
-</div>
+</fieldset>

@@ -18,7 +18,7 @@ echo $this->sections_menu();
 
 ?><form method="post" action="options.php"><?php
 
-settings_fields( DECKS_SLUG . '-options' );
+settings_fields( DECKS_SLUG . '_options' );
 
 do_settings_sections( DECKS_SLUG );
 

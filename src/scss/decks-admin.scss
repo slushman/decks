@@ -41,3 +41,37 @@
 .field-time {
 	margin: 0;
 }
+
+#slide-background {
+
+	fieldset {
+		border 			: 1px solid #e5e5e5;
+		margin-bottom 	: 1.5em;
+		padding 		: 0.5em;
+
+		label {
+			vertical-align: top;
+		}
+	}
+
+	p:not(:last-child) {
+		margin: 0 0 1.5em;
+	}
+}
+
+.slide_page_decks-settings {
+
+	.form-table {
+		margin-bottom: 3em;
+	}
+}
+
+.menu-sections {
+	display 		: flex;
+	flex-wrap 		: wrap;
+	justify-content : space-around;
+
+	li {
+		margin: 1em;
+	}
+}

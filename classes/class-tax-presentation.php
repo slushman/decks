@@ -20,6 +20,15 @@ class Decks_Tax_Presentation {
 	public function __construct() {} // __construct()
 
 	/**
+	 * Registers all the WordPress hooks and filters for this class.
+	 */
+	public function hooks() {
+
+		add_action( 'init', array( $this, 'new_taxonomy_presentation' ) );
+
+	} // hooks()
+
+	/**
 	 * Creates a new taxonomy for a custom post type
 	 *
 	 * @since 	1.0.0

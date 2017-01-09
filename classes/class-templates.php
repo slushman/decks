@@ -60,11 +60,41 @@ class Decks_Templates {
 	 */
 	public function __construct() {
 
-		self::$_this 		= $this;
+		self::$_this = $this;
 
 		$this->set_options();
 
 	} // __construct()
+
+	/**
+	 * Registers all the WordPress hooks and filters for this class.
+	 */
+	public function hooks() {
+
+		// Loop
+		add_action( 'decks-before-loop', 				array( $this, 'loop_wrap_begin' ), 10, 1 );
+
+		add_action( 'decks-before-loop-content', 		array( $this, 'loop_content_wrap_begin' ), 10, 2 );
+		add_action( 'decks-before-loop-content', 		array( $this, 'loop_content_link_begin' ), 15, 2 );
+
+		add_action( 'decks-loop-content', 				array( $this, 'loop_content_image' ), 10, 2 );
+		add_action( 'decks-loop-content', 				array( $this, 'loop_content_title' ), 15, 2 );
+		add_action( 'decks-loop-content', 				array( $this, 'loop_content_subtitle' ), 20, 2 );
+
+		add_action( 'decks-after-loop-content', 		array( $this, 'loop_content_link_end' ), 10, 2 );
+		add_action( 'decks-after-loop-content', 		array( $this, 'loop_content_wrap_end' ), 90, 2 );
+
+		add_action( 'decks-after-loop', 				array( $this, 'loop_wrap_end' ), 10, 1 );
+
+		// Single
+		add_action( 'decks-single-content', 			array( $this, 'single_slide_thumbnail' ), 10 );
+		add_action( 'decks-single-content', 			array( $this, 'single_slide_posttitle' ), 15 );
+		add_action( 'decks-single-content', 			array( $this, 'single_slide_subtitle' ), 20, 1 );
+		add_action( 'decks-single-content', 			array( $this, 'single_slide_content' ), 25 );
+		add_action( 'decks-single-content', 			array( $this, 'single_slide_meta_field' ), 30, 1 );
+
+	} // hooks()
+
 
 	/**
 	 * Returns an array of the featured image details
@@ -229,7 +259,7 @@ class Decks_Templates {
 	 */
 	private function set_options() {
 
-		$this->options = get_option( DECKS_SLUG . '-options' );
+		$this->options = get_option( DECKS_SLUG . '_options' );
 
 	} // set_options()
 

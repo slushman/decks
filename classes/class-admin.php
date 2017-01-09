@@ -1,18 +1,10 @@
- <?php
+<?php
 
 /**
  * The admin-specific functionality of the plugin.
  *
  * @link 		http://wpdecks.com
  * @since 		1.0.0
- *
- * @package 	Decks
- * @subpackage 	Decks/classes
- */
-
-/**
- * The admin-specific functionality of the plugin.
- *
  * @package 	Decks
  * @subpackage 	Decks/classes
  * @author 		Slushman <chris@slushman.com>
@@ -38,6 +30,22 @@ class Decks_Admin {
 		$this->set_options();
 
 	} // __construct()
+
+	/**
+	 * Registers all the WordPress hooks and filters for this class.
+	 */
+	public function hooks() {
+
+		add_action( 'admin_enqueue_scripts', 				array( $this, 'enqueue_styles' ) );
+		add_action( 'admin_enqueue_scripts', 				array( $this, 'enqueue_scripts' ) );
+		add_action( 'admin_init', 							array( $this, 'register_fields' ) );
+		add_action( 'admin_init', 							array( $this, 'register_sections' ) );
+		add_action( 'admin_init', 							array( $this, 'register_settings' ) );
+		add_action( 'admin_menu', 							array( $this, 'add_menu' ) );
+		add_action( 'plugin_action_links_' . DECKS_FILE, 	array( $this, 'link_settings' ) );
+		add_action( 'plugin_row_meta', 						array( $this, 'link_row_meta' ), 10, 2 );
+
+	} // hooks()
 
 	/**
 	 * Adds a settings page link to a menu
@@ -105,13 +113,12 @@ class Decks_Admin {
 	/**
 	 * Creates a checkbox field
 	 *
-	 * @param 	array 		$args 			The arguments for the field
-	 *
+	 * @param 	array 		$atts 			The arguments for the field
 	 * @return 	string 						The HTML field
 	 */
-	public function field_checkbox( $args ) {
+	public function field_checkbox( $atts ) {
 
-		$defaults['name'] = DECKS_SLUG . '-options[' . $args['id'] . ']';
+		$atts['name'] = DECKS_SLUG . '_options[' . $atts['id'] . ']';
 
 		if ( ! empty( $this->options[$atts['id']] ) ) {
 
@@ -126,13 +133,12 @@ class Decks_Admin {
 	/**
 	 * Creates a set of radios field
 	 *
-	 * @param 	array 		$args 			The arguments for the field
-	 *
+	 * @param 	array 		$atts 			The arguments for the field
 	 * @return 	string 						The HTML field
 	 */
-	public function field_radios( $args ) {
+	public function field_radios( $atts ) {
 
-		$defaults['name'] = DECKS_SLUG . '-options[' . $args['id'] . ']';
+		$atts['name'] = DECKS_SLUG . '_options[' . $atts['id'] . ']';
 
 		if ( ! empty( $this->options[$atts['id']] ) ) {
 
@@ -149,13 +155,12 @@ class Decks_Admin {
 	 *
 	 * Note: label is blank since its created in the Settings API
 	 *
-	 * @param 	array 		$args 			The arguments for the field
-	 *
+	 * @param 	array 		$atts 			The arguments for the field
 	 * @return 	string 						The HTML field
 	 */
-	public function field_select( $args ) {
+	public function field_select( $atts ) {
 
-		$defaults['name'] = DECKS_SLUG . '-options[' . $args['id'] . ']';
+		$atts['name'] = DECKS_SLUG . '_options[' . $atts['id'] . ']';
 
 		if ( ! empty( $this->options[$atts['id']] ) ) {
 
@@ -180,13 +185,12 @@ class Decks_Admin {
 	/**
 	 * Creates a text field
 	 *
-	 * @param 	array 		$args 			The arguments for the field
-	 *
+	 * @param 	array 		$atts 			The arguments for the field
 	 * @return 	string 						The HTML field
 	 */
-	public function field_text( $args ) {
+	public function field_text( $atts ) {
 
-		$defaults['name'] = DECKS_SLUG . '-options[' . $args['id'] . ']';
+		$atts['name'] = DECKS_SLUG . '_options[' . $atts['id'] . ']';
 
 		if ( ! empty( $this->options[$atts['id']] ) ) {
 
@@ -201,13 +205,12 @@ class Decks_Admin {
 	/**
 	 * Creates a textarea field
 	 *
-	 * @param 	array 		$args 			The arguments for the field
-	 *
+	 * @param 	array 		$atts 			The arguments for the field
 	 * @return 	string 						The HTML field
 	 */
-	public function field_textarea( $args ) {
+	public function field_textarea( $atts ) {
 
-		$defaults['name'] = DECKS_SLUG . '-options[' . $args['id'] . ']';
+		$atts['name'] = DECKS_SLUG . '_options[' . $atts['id'] . ']';
 
 		if ( ! empty( $this->options[$atts['id']] ) ) {
 
@@ -222,13 +225,12 @@ class Decks_Admin {
 	/**
 	 * Creates a text field
 	 *
-	 * @param 	array 		$args 			The arguments for the field
-	 *
+	 * @param 	array 		$atts 			The arguments for the field
 	 * @return 	string 						The HTML field
 	 */
-	public function field_upload( $args ) {
+	public function field_upload( $atts ) {
 
-		$defaults['name'] = DECKS_SLUG . '-options[' . $args['id'] . ']';
+		$atts['name'] = DECKS_SLUG . '_options[' . $atts['id'] . ']';
 
 		if ( ! empty( $this->options[$atts['id']] ) ) {
 
@@ -250,6 +252,8 @@ class Decks_Admin {
 	public static function get_options_list() {
 
 		$options = array();
+
+		$options[] = array( 'reveal_theme', 'select', DECKS_SLUG . '-theme-simple' );
 
 		$options[] = array( 'display_controls', 'checkbox', 1 );
 		$options[] = array( 'display_progress', 'checkbox', 1 );
@@ -287,6 +291,24 @@ class Decks_Admin {
 		$options[] = array( 'parallax_bghorizontal', 'number', null );
 		$options[] = array( 'parallax_bgvertical', 'number', null );
 
+		$options[] = array( 'dependency_classlist', 'checkbox', 0 );
+		$options[] = array( 'dependency_highlight', 'checkbox', 0 );
+		$options[] = array( 'dependency_markdown', 'checkbox', 0 );
+		$options[] = array( 'dependency_marked', 'checkbox', 0 );
+		$options[] = array( 'dependency_math', 'checkbox', 0 );
+		$options[] = array( 'dependency_multiplex', 'checkbox', 0 );
+		$options[] = array( 'dependency_multiplex_client', 'checkbox', 0 );
+		$options[] = array( 'dependency_multiplex_master', 'checkbox', 0 );
+		$options[] = array( 'dependency_notes', 'checkbox', 0 );
+		$options[] = array( 'dependency_notes_client', 'checkbox', 0 );
+		$options[] = array( 'dependency_notes_server', 'checkbox', 0 );
+		$options[] = array( 'dependency_print_pdf', 'checkbox', 0 );
+		$options[] = array( 'dependency_search', 'checkbox', 0 );
+		$options[] = array( 'dependency_zoom', 'checkbox', 0 );
+
+		$options[] = array( 'fonts_source_sans_pro', 'checkbox', 0 );
+		$options[] = array( 'fonts_league_gothic', 'checkbox', 0 );
+
 		return $options;
 
 	} // get_options_list()
@@ -308,9 +330,7 @@ class Decks_Admin {
 	 * Adds a link to the plugin settings page
 	 *
 	 * @since 		1.0.0
-	 *
 	 * @param 		array 		$links 		The current array of links
-	 *
 	 * @return 		array 					The modified array of links
 	 */
 	public function link_settings( $links ) {
@@ -325,10 +345,8 @@ class Decks_Admin {
 	 * Adds links to the plugin links row
 	 *
 	 * @since 		1.0.0
-	 *
 	 * @param 		array 		$links 		The current array of row links
 	 * @param 		string 		$file 		The name of the file
-	 *
 	 * @return 		array 					The modified array of row links
 	 */
 	public function link_row_meta( $links, $file ) {
@@ -347,8 +365,6 @@ class Decks_Admin {
 	 * Includes the help page view
 	 *
 	 * @since 		1.0.0
-	 *
-	 * @return 		void
 	 */
 	public function page_help() {
 
@@ -360,8 +376,6 @@ class Decks_Admin {
 	 * Includes the options page view
 	 *
 	 * @since 		1.0.0
-	 *
-	 * @return 		void
 	 */
 	public function page_options() {
 
@@ -377,8 +391,36 @@ class Decks_Admin {
 		// add_settings_field( $id, $title, $callback, $menu_slug, $section, $args );
 
 		/**
-		 * Display Settings
-		 */
+		* Display Settings
+		*/
+		add_settings_field(
+			'reveal_theme',
+			esc_html__( 'Reveal Theme', 'decks' ),
+			array( $this, 'field_select' ),
+			DECKS_SLUG,
+			DECKS_SLUG . '-displaysettings',
+			array(
+				'description' 	=> __( 'Choose one of the pre-built themes.', 'decks' ),
+				'id' 			=> 'reveal_theme',
+				'selections' 	=> array(
+					array( 'label' => __( 'Simple', 'decks' ), 		'value' => DECKS_SLUG . '-theme-simple' ),
+					array( 'label' => __( 'Beige', 'decks' ), 		'value' => DECKS_SLUG . '-theme-beige' ),
+					array( 'label' => __( 'Black', 'decks' ), 		'value' => DECKS_SLUG . '-theme-black' ),
+					array( 'label' => __( 'Blood', 'decks' ), 		'value' => DECKS_SLUG . '-theme-blood' ),
+					array( 'label' => __( 'League', 'decks' ), 		'value' => DECKS_SLUG . '-theme-league' ),
+					array( 'label' => __( 'Moon', 'decks' ), 		'value' => DECKS_SLUG . '-theme-moon' ),
+					array( 'label' => __( 'Night', 'decks' ), 		'value' => DECKS_SLUG . '-theme-night' ),
+					array( 'label' => __( 'Paper', 'decks' ), 		'value' => DECKS_SLUG . '-theme-paper' ),
+					array( 'label' => __( 'Serif', 'decks' ), 		'value' => DECKS_SLUG . '-theme-serif' ),
+					array( 'label' => __( 'Sky', 'decks' ), 		'value' => DECKS_SLUG . '-theme-sky' ),
+					array( 'label' => __( 'Solarized', 'decks' ), 	'value' => DECKS_SLUG . '-theme-solarized' ),
+					array( 'label' => __( 'White', 'decks' ), 		'value' => DECKS_SLUG . '-theme-white' ),
+					array( 'label' => __( 'Zenburn', 'decks' ), 	'value' => DECKS_SLUG . '-theme-zenburn' )
+				),
+				'value' 			=> DECKS_SLUG . '-theme-simple'
+			)
+		);
+
 		add_settings_field(
 			'display_controls',
 			esc_html__( 'Display Controls', 'decks' ),
@@ -483,6 +525,8 @@ class Decks_Admin {
 				'value' 		=> 1
 			)
 		);
+
+
 
 		/**
 		 * Presentation Controls Settings
@@ -677,19 +721,19 @@ class Decks_Admin {
 		);
 
 		/**
-		 * Transition Settings
-		 */
-		 add_settings_field(
- 		   'transition',
- 		   esc_html__( 'Transition', 'decks' ),
- 		   array( $this, 'field_select' ),
- 		   DECKS_SLUG,
- 		   DECKS_SLUG . '-transition',
- 		   array(
- 			   'description' 	=> __( 'Transition style. If anything other than "default" is selected for transition out, this becomes the default transition in.', 'decks' ),
- 			   'id' 			=> 'transition',
-			   'selections' 	=> array(
-				   	array( 'label' => __( 'Default', 'decks' ), 'value' => 'default' ),
+		* Transition Settings
+		*/
+		add_settings_field(
+			'transition',
+			esc_html__( 'Transition', 'decks' ),
+			array( $this, 'field_select' ),
+			DECKS_SLUG,
+			DECKS_SLUG . '-transition',
+			array(
+				'description' 	=> __( 'Transition style. If anything other than "default" is selected for transition out, this becomes the default transition in.', 'decks' ),
+				'id' 			=> 'transition',
+				'selections' 	=> array(
+					array( 'label' => __( 'Default', 'decks' ), 'value' => 'default' ),
 					array( 'label' => __( 'None', 'decks' ), 'value' => 'none' ),
 					array( 'label' => __( 'Fade', 'decks' ), 'value' => 'fade' ),
 					array( 'label' => __( 'Slide', 'decks' ), 'value' => 'slide' ),
@@ -697,61 +741,61 @@ class Decks_Admin {
 					array( 'label' => __( 'Concave', 'decks' ), 'value' => 'concave' ),
 					array( 'label' => __( 'Zoom', 'decks' ), 'value' => 'zoom' )
 				),
- 			   'value' 			=> 'default'
- 		   )
- 	   );
+				'value' 			=> 'default'
+			)
+		);
 
-	   add_settings_field(
-		 'transition-out',
-		 esc_html__( 'Transition Out', 'decks' ),
-		 array( $this, 'field_select' ),
-		 DECKS_SLUG,
-		 DECKS_SLUG . '-transition',
-		 array(
-			 'description' 	=> __( 'Transition-out style. If anything other than "default" is selected, this becomes the default transition out and the transition setting becomes the default transition in.', 'decks' ),
-			 'id' 			=> 'transition-out',
-			 'selections' 	=> array(
-				 array( 'label' => __( 'Default', 'decks' ), 'value' => 'default' ),
-				  array( 'label' => __( 'None', 'decks' ), 'value' => 'none' ),
-				  array( 'label' => __( 'Fade', 'decks' ), 'value' => 'fade' ),
-				  array( 'label' => __( 'Slide', 'decks' ), 'value' => 'slide' ),
-				  array( 'label' => __( 'Convex', 'decks' ), 'value' => 'convex' ),
-				  array( 'label' => __( 'Concave', 'decks' ), 'value' => 'concave' ),
-				  array( 'label' => __( 'Zoom', 'decks' ), 'value' => 'zoom' )
-			  ),
-			 'value' 			=> 'default'
-		 )
-	 );
+		add_settings_field(
+			'transition-out',
+			esc_html__( 'Transition Out', 'decks' ),
+			array( $this, 'field_select' ),
+			DECKS_SLUG,
+			DECKS_SLUG . '-transition',
+			array(
+				'description' 	=> __( 'Transition-out style. If anything other than "default" is selected, this becomes the default transition out and the transition setting becomes the default transition in.', 'decks' ),
+				'id' 			=> 'transition-out',
+				'selections' 	=> array(
+					array( 'label' => __( 'Default', 'decks' ), 'value' => 'default' ),
+					array( 'label' => __( 'None', 'decks' ), 'value' => 'none' ),
+					array( 'label' => __( 'Fade', 'decks' ), 'value' => 'fade' ),
+					array( 'label' => __( 'Slide', 'decks' ), 'value' => 'slide' ),
+					array( 'label' => __( 'Convex', 'decks' ), 'value' => 'convex' ),
+					array( 'label' => __( 'Concave', 'decks' ), 'value' => 'concave' ),
+					array( 'label' => __( 'Zoom', 'decks' ), 'value' => 'zoom' )
+				),
+				'value' 			=> 'default'
+			)
+		);
 
- 	   add_settings_field(
- 		   'transition_speed',
- 		   esc_html__( 'Transition Speed', 'decks' ),
- 		   array( $this, 'field_select' ),
- 		   DECKS_SLUG,
- 		   DECKS_SLUG . '-transition',
- 		   array(
- 			   'description' 	=> __( 'Stop auto-sliding after user input.', 'decks' ),
- 			   'id' 			=> 'transition_speed',
-			   'selections' 	=> array(
+		add_settings_field(
+			'transition_speed',
+			esc_html__( 'Transition Speed', 'decks' ),
+			array( $this, 'field_select' ),
+			DECKS_SLUG,
+			DECKS_SLUG . '-transition',
+			array(
+				'description' 	=> __( 'Stop auto-sliding after user input.', 'decks' ),
+				'id' 			=> 'transition_speed',
+				'selections' 	=> array(
 					array( 'label' => __( 'Default', 'decks' ), 'value' => 'default' ),
 					array( 'label' => __( 'Fast', 'decks' ), 'value' => 'fast' ),
 					array( 'label' => __( 'Slow', 'decks' ), 'value' => 'slow' )
 				),
- 			   'value' 			=> 'default'
- 		   )
- 	   );
+				'value' 			=> 'default'
+			)
+		);
 
- 	   add_settings_field(
- 		   'transition_bg',
- 		   esc_html__( 'Background Transition', 'decks' ),
- 		   array( $this, 'field_select' ),
- 		   DECKS_SLUG,
- 		   DECKS_SLUG . '-transition',
- 		   array(
- 			   'description' 	=> __( 'Use this method for navigation when auto-sliding.', 'decks' ),
- 			   'id' 			=> 'transition_bg',
-			   'selections' 	=> array(
-				   array( 'label' => __( 'Default', 'decks' ), 'value' => 'default' ),
+		add_settings_field(
+			'transition_bg',
+			esc_html__( 'Background Transition', 'decks' ),
+			array( $this, 'field_select' ),
+			DECKS_SLUG,
+			DECKS_SLUG . '-transition',
+			array(
+				'description' 	=> __( 'Use this method for navigation when auto-sliding.', 'decks' ),
+				'id' 			=> 'transition_bg',
+				'selections' 	=> array(
+					array( 'label' => __( 'Default', 'decks' ), 'value' => 'default' ),
 					array( 'label' => __( 'None', 'decks' ), 'value' => 'none' ),
 					array( 'label' => __( 'Fade', 'decks' ), 'value' => 'fade' ),
 					array( 'label' => __( 'Slide', 'decks' ), 'value' => 'slide' ),
@@ -759,222 +803,252 @@ class Decks_Admin {
 					array( 'label' => __( 'Concave', 'decks' ), 'value' => 'concave' ),
 					array( 'label' => __( 'Zoom', 'decks' ), 'value' => 'zoom' )
 				),
- 			   'value' 			=> 'default'
- 		   )
- 	   );
+				'value' 			=> 'default'
+			)
+		);
 
 		/**
 		 * Parallax Settings
 		 */
 		 add_settings_field(
-	 		  'parallax_bgimg',
-	 		  esc_html__( 'Parallax Background Image', 'decks' ),
-	 		  array( $this, 'field_uploader' ),
-	 		  DECKS_SLUG,
-	 		  DECKS_SLUG . '-parallax',
-	 		  array(
-	 			  'description' 	=> __( '', 'decks' ),
-	 			  'id' 			=> 'parallax_bgimg',
-	 			  'value' 			=> ''
-	 		  )
-		  );
+			'parallax_bgimg',
+			esc_html__( 'Parallax Background Image', 'decks' ),
+			array( $this, 'field_uploader' ),
+			DECKS_SLUG,
+			DECKS_SLUG . '-parallax',
+			array(
+				'description' 	=> __( '', 'decks' ),
+				'id' 			=> 'parallax_bgimg',
+				'value' 			=> ''
+			)
+		);
 
 		 add_settings_field(
- 		   'parallax_bgsize',
- 		   esc_html__( 'Parallax Background Image Size', 'decks' ),
- 		   array( $this, 'field_text' ),
- 		   DECKS_SLUG,
- 		   DECKS_SLUG . '-parallax',
- 		   array(
- 			   'description' 	=> __( 'Use CSS syntax like: 2100px 900px.', 'decks' ),
- 			   'id' 			=> 'parallax_bgsize',
-			   'label-remove' 	=> esc_html__( 'Remove Image', 'decks' ),
-			   'label-upload' 	=> esc_html__( 'Choose/Upload Image', 'decks' ),
- 			   'value' 			=> ''
- 		   )
- 	   );
+			'parallax_bgsize',
+			esc_html__( 'Parallax Background Image Size', 'decks' ),
+			array( $this, 'field_text' ),
+			DECKS_SLUG,
+			DECKS_SLUG . '-parallax',
+			array(
+				'description' 	=> __( 'Use CSS syntax like: 2100px 900px.', 'decks' ),
+				'id' 			=> 'parallax_bgsize',
+				'label-remove' 	=> esc_html__( 'Remove Image', 'decks' ),
+				'label-upload' 	=> esc_html__( 'Choose/Upload Image', 'decks' ),
+				'value' 			=> ''
+			)
+		);
 
-	   add_settings_field(
-		  'parallax_bghorizontal',
-		  esc_html__( 'Parallax Background Horizontal', 'decks' ),
-		  array( $this, 'field_text' ),
-		  DECKS_SLUG,
-		  DECKS_SLUG . '-parallax',
-		  array(
-			  'description' 	=> __( 'Number of pixels to move the parallax background per slide on the horizontal axis. Set to 0 to disable horizontal movement. If not, set this will calculated automatically.', 'decks' ),
-			  'id' 				=> 'parallax_bghorizontal',
-			  'type' 			=> 'number',
-			  'value' 			=> ''
-		  )
-	  );
+		add_settings_field(
+			'parallax_bghorizontal',
+			esc_html__( 'Parallax Background Horizontal', 'decks' ),
+			array( $this, 'field_text' ),
+			DECKS_SLUG,
+			DECKS_SLUG . '-parallax',
+			array(
+				'description' 	=> __( 'Number of pixels to move the parallax background per slide on the horizontal axis. Set to 0 to disable horizontal movement. If not, set this will calculated automatically.', 'decks' ),
+				'id' 			=> 'parallax_bghorizontal',
+				'type' 			=> 'number',
+				'value' 		=> ''
+			)
+		);
 
-	  add_settings_field(
-		 'parallax_bgvertical',
-		 esc_html__( 'Autoslide', 'decks' ),
-		 array( $this, 'field_text' ),
-		 DECKS_SLUG,
-		 DECKS_SLUG . '-parallax',
-		 array(
-			 'description' 		=> __( 'Number of pixels to move the parallax background per slide on the vertical axis. Set to 0 to disable vertical movement. If not, set this will calculated automatically..', 'decks' ),
-			 'id' 				=> 'parallax_bgvertical',
-			 'type' 			=> 'number',
-			 'value' 			=> ''
-		 )
-	  );
-
-
-	  /**
-	   * Dependencies Settings
-	   */
-	   add_settings_field(
- 		  'dependency_classlist',
- 		  esc_html__( 'ClassList', 'decks' ),
- 		  array( $this, 'field_checkbox' ),
- 		  DECKS_SLUG,
- 		  DECKS_SLUG . '-dependencies',
- 		  array(
- 			  'description' => __( 'Cross-browser shim that fully implements classList.', 'decks' ),
- 			  'id' 			=> 'dependency_classlist',
- 			  'value' 		=> 1
- 		  )
- 	  );
-
-	  add_settings_field(
-		  'dependency_markdown',
-		  esc_html__( 'Markdown', 'decks' ),
-		  array( $this, 'field_checkbox' ),
-		  DECKS_SLUG,
-		  DECKS_SLUG . '-dependencies',
-		  array(
-			  'description' => __( 'Interpret Markdown in <section> elements.', 'decks' ),
-			  'id' 			=> 'dependency_markdown',
-			  'value' 		=> 1
-		  )
-	  );
-
-	  add_settings_field(
-		  'dependency_highlight',
-		  esc_html__( 'Syntax Highlighting', 'decks' ),
-		  array( $this, 'field_checkbox' ),
-		  DECKS_SLUG,
-		  DECKS_SLUG . '-dependencies',
-		  array(
-			  'description' => __( 'Syntax highlight for <code> elements.', 'decks' ),
-			  'id' 			=> 'dependency_highlight',
-			  'value' 		=> 1
-		  )
-	  );
-
-	  add_settings_field(
-		  'dependency_zoom',
-		  esc_html__( 'Zooming', 'decks' ),
-		  array( $this, 'field_checkbox' ),
-		  DECKS_SLUG,
-		  DECKS_SLUG . '-dependencies',
-		  array(
-			  'description' => __( 'Zoom in and out with alt+click.', 'decks' ),
-			  'id' 			=> 'dependency_zoom',
-			  'value' 		=> 1
-		  )
-	  );
-
-	  add_settings_field(
-		  'dependency_notes',
-		  esc_html__( 'Speaker Notes', 'decks' ),
-		  array( $this, 'field_checkbox' ),
-		  DECKS_SLUG,
-		  DECKS_SLUG . '-dependencies',
-		  array(
-			  'description' => __( '', 'decks' ),
-			  'id' 			=> 'dependency_notes',
-			  'value' 		=> 1
-		  )
-	  );
-
-	  add_settings_field(
-		  'dependency_mathjax',
-		  esc_html__( 'MathJax', 'decks' ),
-		  array( $this, 'field_checkbox' ),
-		  DECKS_SLUG,
-		  DECKS_SLUG . '-dependencies',
-		  array(
-			  'description' => __( '', 'decks' ),
-			  'id' 			=> 'dependency_mathjax',
-			  'value' 		=> 1
-		  )
-	  );
-
-	  add_settings_field(
-		  'dependency_server_notes',
-		  esc_html__( 'Server Side Speaker Notes', 'decks' ),
-		  array( $this, 'field_checkbox' ),
-		  DECKS_SLUG,
-		  DECKS_SLUG . '-dependencies',
-		  array(
-			  'description' => __( 'Run your speaker notes on a separate device.', 'decks' ),
-			  'id' 			=> 'dependency_server_notes',
-			  'value' 		=> 1
-		  )
-	  );
+		add_settings_field(
+			'parallax_bgvertical',
+			esc_html__( 'Autoslide', 'decks' ),
+			array( $this, 'field_text' ),
+			DECKS_SLUG,
+			DECKS_SLUG . '-parallax',
+			array(
+				'description' 	=> __( 'Number of pixels to move the parallax background per slide on the vertical axis. Set to 0 to disable vertical movement. If not, set this will calculated automatically..', 'decks' ),
+				'id' 			=> 'parallax_bgvertical',
+				'type' 			=> 'number',
+				'value' 		=> ''
+			)
+		);
 
 
-	  /**
-	   * Multiplexing Settings
-	   */
-	  add_settings_field(
-		  'multiplexing',
-		  esc_html__( 'Multiplexing', 'decks' ),
-		  array( $this, 'field_checkbox' ),
-		  DECKS_SLUG,
-		  DECKS_SLUG . '-multiplexing',
-		  array(
-			  'description' => __( 'Allow your audience to view your presentation on their devices.', 'decks' ),
-			  'id' 			=> 'multiplexing',
-			  'value' 		=> 0
-		  )
-	  );
+		/**
+		 * Dependencies Settings
+		 */
+		add_settings_field(
+			'dependency_classlist',
+			esc_html__( 'ClassList', 'decks' ),
+			array( $this, 'field_checkbox' ),
+			DECKS_SLUG,
+			DECKS_SLUG . '-dependencies',
+			array(
+				'description' => __( 'Cross-browser shim that fully implements classList.', 'decks' ),
+				'id' 			=> 'dependency_classlist',
+				'value' 		=> 1
+			)
+		);
 
-	  add_settings_field(
-		 'multiplexing_secret',
-		 esc_html__( 'Multiplexing Secret', 'decks' ),
-		 array( $this, 'field_text' ),
-		 DECKS_SLUG,
-		 DECKS_SLUG . '-multiplexing',
-		 array(
-			 'description' 		=> __( 'Obtained from the socket.io server. Gives this (the master) control of the presentation.', 'decks' ),
-			 'id' 				=> 'multiplexing_secret',
-			 'type' 			=> 'text',
-			 'value' 			=> ''
-		 )
-	  );
+		add_settings_field(
+			'dependency_markdown',
+			esc_html__( 'Markdown', 'decks' ),
+			array( $this, 'field_checkbox' ),
+			DECKS_SLUG,
+			DECKS_SLUG . '-dependencies',
+			array(
+				'description' => __( 'Interpret Markdown in <section> elements.', 'decks' ),
+				'id' 			=> 'dependency_markdown',
+				'value' 		=> 1
+			)
+		);
 
-	  add_settings_field(
-		 'multiplexing_id',
-		 esc_html__( 'Multiplexing ID', 'decks' ),
-		 array( $this, 'field_text' ),
-		 DECKS_SLUG,
-		 DECKS_SLUG . '-multiplexing',
-		 array(
-			 'description' 		=> __( 'Obtained from socket.io server.', 'decks' ),
-			 'id' 				=> 'multiplexing_id',
-			 'type' 			=> 'text',
-			 'value' 			=> ''
-		 )
-	  );
+		add_settings_field(
+			'dependency_highlight',
+			esc_html__( 'Syntax Highlighting', 'decks' ),
+			array( $this, 'field_checkbox' ),
+			DECKS_SLUG,
+			DECKS_SLUG . '-dependencies',
+			array(
+				'description' => __( 'Syntax highlight for <code> elements.', 'decks' ),
+				'id' 			=> 'dependency_highlight',
+				'value' 		=> 1
+			)
+		);
 
-	  add_settings_field(
-		 'multiplexing_url',
-		 esc_html__( 'Multiplexing ', 'decks' ),
-		 array( $this, 'field_text' ),
-		 DECKS_SLUG,
-		 DECKS_SLUG . '-multiplexing',
-		 array(
-			 'description' 		=> __( 'URL of socket.io server.', 'decks' ),
-			 'id' 				=> 'multiplexing_url',
-			 'type' 			=> 'url',
-			 'value' 			=> ''
-		 )
-	  );
+		add_settings_field(
+			'dependency_zoom',
+			esc_html__( 'Zooming', 'decks' ),
+			array( $this, 'field_checkbox' ),
+			DECKS_SLUG,
+			DECKS_SLUG . '-dependencies',
+			array(
+				'description' => __( 'Zoom in and out with alt+click.', 'decks' ),
+				'id' 			=> 'dependency_zoom',
+				'value' 		=> 1
+			)
+		);
+
+		add_settings_field(
+			'dependency_notes',
+			esc_html__( 'Speaker Notes', 'decks' ),
+			array( $this, 'field_checkbox' ),
+			DECKS_SLUG,
+			DECKS_SLUG . '-dependencies',
+			array(
+				'description' => __( '', 'decks' ),
+				'id' 			=> 'dependency_notes',
+				'value' 		=> 1
+			)
+		);
+
+		add_settings_field(
+			'dependency_mathjax',
+			esc_html__( 'MathJax', 'decks' ),
+			array( $this, 'field_checkbox' ),
+			DECKS_SLUG,
+			DECKS_SLUG . '-dependencies',
+			array(
+				'description' => __( '', 'decks' ),
+				'id' 			=> 'dependency_mathjax',
+				'value' 		=> 1
+			)
+		);
+
+		add_settings_field(
+			'dependency_notes_server',
+			esc_html__( 'Server Side Speaker Notes', 'decks' ),
+			array( $this, 'field_checkbox' ),
+			DECKS_SLUG,
+			DECKS_SLUG . '-dependencies',
+			array(
+				'description' => __( 'Run your speaker notes on a separate device.', 'decks' ),
+				'id' 			=> 'dependency_notes_server',
+				'value' 		=> 1
+			)
+		);
+
+
+		/**
+		 * Multiplexing Settings
+		 */
+		add_settings_field(
+			'multiplexing',
+			esc_html__( 'Multiplexing', 'decks' ),
+			array( $this, 'field_checkbox' ),
+			DECKS_SLUG,
+			DECKS_SLUG . '-multiplexing',
+			array(
+				'description' => __( 'Allow your audience to view your presentation on their devices.', 'decks' ),
+				'id' 			=> 'multiplexing',
+				'value' 		=> 0
+			)
+		);
+
+		add_settings_field(
+			'multiplexing_secret',
+			esc_html__( 'Multiplexing Secret', 'decks' ),
+			array( $this, 'field_text' ),
+			DECKS_SLUG,
+			DECKS_SLUG . '-multiplexing',
+			array(
+				'description' 	=> __( 'Obtained from the socket.io server. Gives this (the master) control of the presentation.', 'decks' ),
+				'id' 			=> 'multiplexing_secret',
+				'type' 			=> 'text',
+				'value' 		=> ''
+			)
+		);
+
+		add_settings_field(
+			'multiplexing_id',
+			esc_html__( 'Multiplexing ID', 'decks' ),
+			array( $this, 'field_text' ),
+			DECKS_SLUG,
+			DECKS_SLUG . '-multiplexing',
+			array(
+				'description' 		=> __( 'Obtained from socket.io server.', 'decks' ),
+				'id' 				=> 'multiplexing_id',
+				'type' 			=> 'text',
+				'value' 			=> ''
+			)
+		);
+
+		add_settings_field(
+			'multiplexing_url',
+			esc_html__( 'Multiplexing ', 'decks' ),
+			array( $this, 'field_text' ),
+			DECKS_SLUG,
+			DECKS_SLUG . '-multiplexing',
+			array(
+				'description' 		=> __( 'URL of socket.io server.', 'decks' ),
+				'id' 				=> 'multiplexing_url',
+				'type' 			=> 'url',
+				'value' 			=> ''
+			)
+		);
+
+
+		/**
+		 * Fonts Settings
+		 */
+		add_settings_field(
+			'fonts_source_sans_pro',
+			esc_html__( 'Source Sans Pro', 'decks' ),
+			array( $this, 'field_checkbox' ),
+			DECKS_SLUG,
+			DECKS_SLUG . '-fonts',
+			array(
+				'description' 	=> __( 'Loads the Source Sans Pro fonts from Google fonts.', 'decks' ),
+				'id' 			=> 'fonts_source_sans_pro',
+				'value' 		=> 0
+			)
+		);
+
+		add_settings_field(
+			'fonts_league_gothic',
+			esc_html__( 'League Gothic', 'decks' ),
+			array( $this, 'field_checkbox' ),
+			DECKS_SLUG,
+			DECKS_SLUG . '-fonts',
+			array(
+				'description' 	=> __( 'Loads the League Gothic fonts.', 'decks' ),
+				'id' 			=> 'fonts_league_gothic',
+				'value' 		=> 0
+			)
+		);
 
 	} // register_fields()
 
@@ -1041,6 +1115,13 @@ class Decks_Admin {
 			DECKS_SLUG
 		);
 
+		add_settings_section(
+			DECKS_SLUG . '-fonts',
+			esc_html__( 'Fonts', 'decks' ),
+			array( $this, 'section_fonts' ),
+			DECKS_SLUG
+		);
+
 	} // register_sections()
 
 	/**
@@ -1053,8 +1134,8 @@ class Decks_Admin {
 		// register_setting( $option_group, $option_name, $sanitize_callback );
 
 		register_setting(
-			DECKS_SLUG . '-options',
-			DECKS_SLUG . '-options',
+			DECKS_SLUG . '_options',
+			DECKS_SLUG . '_options',
 			array( $this, 'validate_options' )
 		);
 
@@ -1064,9 +1145,7 @@ class Decks_Admin {
 	 * Displays a settings section
 	 *
 	 * @since 		1.0.0
-	 *
 	 * @param 		array 		$params 		Array of parameters for the section
-	 *
 	 * @return 		mixed 						The settings section
 	 */
 	public function section_autoslide( $params ) {
@@ -1079,9 +1158,7 @@ class Decks_Admin {
 	 * Displays a settings section
 	 *
 	 * @since 		1.0.0
-	 *
 	 * @param 		array 		$params 		Array of parameters for the section
-	 *
 	 * @return 		mixed 						The settings section
 	 */
 	public function section_behavior( $params ) {
@@ -1094,9 +1171,7 @@ class Decks_Admin {
 	 * Displays a settings section
 	 *
 	 * @since 		1.0.0
-	 *
 	 * @param 		array 		$params 		Array of parameters for the section
-	 *
 	 * @return 		mixed 						The settings section
 	 */
 	public function section_controls( $params ) {
@@ -1109,9 +1184,7 @@ class Decks_Admin {
 	 * Displays a settings section
 	 *
 	 * @since 		1.0.0
-	 *
 	 * @param 		array 		$params 		Array of parameters for the section
-	 *
 	 * @return 		mixed 						The settings section
 	 */
 	public function section_dependencies( $params ) {
@@ -1124,9 +1197,7 @@ class Decks_Admin {
 	 * Displays a settings section
 	 *
 	 * @since 		1.0.0
-	 *
 	 * @param 		array 		$params 		Array of parameters for the section
-	 *
 	 * @return 		mixed 						The settings section
 	 */
 	public function section_displaysettings( $params ) {
@@ -1139,9 +1210,20 @@ class Decks_Admin {
 	 * Displays a settings section
 	 *
 	 * @since 		1.0.0
-	 *
 	 * @param 		array 		$params 		Array of parameters for the section
+	 * @return 		mixed 						The settings section
+	 */
+	public function section_fonts( $params ) {
+
+		include( plugin_dir_path( dirname( __FILE__ ) ) . 'views/sections/fonts.php' );
+
+	} // section_fonts()
+
+	/**
+	 * Displays a settings section
 	 *
+	 * @since 		1.0.0
+	 * @param 		array 		$params 		Array of parameters for the section
 	 * @return 		mixed 						The settings section
 	 */
 	public function section_multiplexing( $params ) {
@@ -1154,9 +1236,7 @@ class Decks_Admin {
 	 * Displays a settings section
 	 *
 	 * @since 		1.0.0
-	 *
 	 * @param 		array 		$params 		Array of parameters for the section
-	 *
 	 * @return 		mixed 						The settings section
 	 */
 	public function section_parallax( $params ) {
@@ -1169,9 +1249,7 @@ class Decks_Admin {
 	 * Displays a settings section
 	 *
 	 * @since 		1.0.0
-	 *
 	 * @param 		array 		$params 		Array of parameters for the section
-	 *
 	 * @return 		mixed 						The settings section
 	 */
 	public function section_transition( $params ) {
@@ -1181,8 +1259,9 @@ class Decks_Admin {
 	} // section_transition()
 
 	/**
-	 * [sections_menu description]
-	 * @return [type] [description]
+	 * Displays an anchor menu at the top of the settings page.
+	 *
+	 * @return 		mixed 		The anchor menu markup.
 	 */
 	protected function sections_menu() {
 
@@ -1216,7 +1295,7 @@ class Decks_Admin {
 	 */
 	private function set_options() {
 
-		$this->options = get_option( DECKS_SLUG . '-options' );
+		$this->options = get_option( DECKS_SLUG . '_options' );
 
 	} // set_options()
 
@@ -1224,9 +1303,7 @@ class Decks_Admin {
 	 * Validates saved options
 	 *
 	 * @since 		1.0.0
-	 *
 	 * @param 		array 		$input 			array of submitted plugin options
-	 *
 	 * @return 		array 						array of validated plugin options
 	 */
 	public function validate_options( $input ) {
@@ -1238,12 +1315,6 @@ class Decks_Admin {
 
 			$sanitizer 			= new Decks_Sanitize();
 			$valid[$option[0]] 	= $sanitizer->clean( $input[$option[0]], $option[1] );
-
-			if ( $valid[$option[0]] != $input[$option[0]] ) {
-
-				add_settings_error( $option[0], $option[0] . '_error', esc_html__( $option[0] . ' error.', 'decks' ), 'error' );
-
-			}
 
 			unset( $sanitizer );
 

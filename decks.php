@@ -13,7 +13,7 @@
  * Description: 		An easy way to create presentations with Reveal.js.
  * Version: 			1.0.0
  * Author: 				Slushman
- * Author URI: 			http://slushman.com/
+ * Author URI: 			https://www.slushman.com/
  * License: 			GPL-2.0+
  * License URI: 		http://www.gnu.org/licenses/gpl-2.0.txt
  * Text Domain: 		decks
@@ -37,71 +37,49 @@ register_activation_hook( __FILE__, array( 'Decks_Activator', 'activate' ) );
 register_deactivation_hook( __FILE__, array( 'Decks_Deactivator', 'deactivate' ) );
 
 /**
- * Autoloader function
- *
- * Will search both plugin root and includes folder for class
- *
- * @param string $class_name
+ * Load Autoloader
  */
-if ( ! function_exists( 'decks_autoloader' ) ) :
+require plugin_dir_path( __FILE__ ) . 'classes/class-autoloader.php';
 
-	function decks_autoloader( $class_name ) {
+/**
+ * Load Global Functions.
+ */
+require plugin_dir_path( __FILE__ ) . 'classes/global-functions.php';
 
-		$class_name = str_replace( 'Decks_', '', $class_name );
-		$lower 		= strtolower( $class_name );
-		$file      	= 'class-' . str_replace( '_', '-', $lower ) . '.php';
-		$base_path 	= plugin_dir_path( __FILE__ );
-		$paths[] 	= $base_path . $file;
-		$paths[] 	= $base_path . 'classes/' . $file;
+/**
+ * Initializes each class and adds the hooks action in each to after_setup_theme
+ *
+ *
+ *
+ * @TODO: move all plugin settings to term meta on the taxonomies. These are settings that
+ * may need to change between presentations.
+ */
+function decks_init() {
 
-		/**
-		 * plugin_name_autoloader_paths filter
-		 */
-		$paths = apply_filters( 'decks-autoloader-paths', $paths );
+	$obj_admin 		= new Decks_Admin();
+	$obj_cpt_slide 	= new Decks_CPT_Slide();
+	$obj_customizer = new Decks_Customizer();
+	$obj_i18n 		= new Decks_i18n();
+	$obj_mb_bg 		= new Decks_Metabox_Background();
+	$obj_public 	= new Decks_Public();
+	$obj_slidecode 	= new Decks_Shortcode_Slidecode();
+	$obj_slidenotes = new Decks_Shortcode_Slidenotes();
+	$obj_slidestep 	= new Decks_Shortcode_Slidestep();
+	$obj_tax_pres 	= new Decks_Tax_Presentation();
+	$obj_templates 	= new Decks_Templates();
 
-		foreach ( $paths as $path ) :
+	add_action( 'after_setup_theme', array( $obj_admin, 'hooks' ) );
+	add_action( 'after_setup_theme', array( $obj_cpt_slide, 'hooks' ) );
+	add_action( 'after_setup_theme', array( $obj_customizer, 'hooks' ) );
+	add_action( 'after_setup_theme', array( $obj_i18n, 'hooks' ) );
+	add_action( 'after_setup_theme', array( $obj_mb_bg, 'hooks' ) );
+	add_action( 'after_setup_theme', array( $obj_public, 'hooks' ) );
+	add_action( 'after_setup_theme', array( $obj_slidecode, 'hooks' ) );
+	add_action( 'after_setup_theme', array( $obj_slidenotes, 'hooks' ) );
+	add_action( 'after_setup_theme', array( $obj_slidestep, 'hooks' ) );
+	add_action( 'after_setup_theme', array( $obj_tax_pres, 'hooks' ) );
+	add_action( 'after_setup_theme', array( $obj_templates, 'hooks' ) );
 
-			if ( is_readable( $path ) && file_exists( $path ) ) {
+} // decks_init()
 
-				require_once( $path );
-				return;
-
-			}
-
-		endforeach;
-
-	} // decks_autoloader()
-
-endif;
-
-spl_autoload_register( 'decks_autoloader' );
-
-if ( ! function_exists( 'decks_init' ) ) :
-
-	/**
-	 * Function to initialize plugin
-	 */
-	function decks_init() {
-
-		decks()->run();
-
-	}
-
-	add_action( 'plugins_loaded', 'decks_init' );
-
-endif;
-
-if ( ! function_exists( 'decks' ) ) :
-
-	/**
-	 * Function wrapper to get instance of plugin
-	 *
-	 * @return Plugin_Name_Class
-	 */
-	function decks() {
-
-		return Decks::get_instance();
-
-	}
-
-endif;
+add_action( 'plugins_loaded', 'decks_init' );

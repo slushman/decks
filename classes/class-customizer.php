@@ -16,6 +16,21 @@ class Decks_Customizer {
 	public function __construct() {}
 
 	/**
+	 * Registers all the WordPress hooks and filters for this class.
+	 */
+	public function hooks() {
+
+		add_action( 'customize_register', 					array( $this, 'register_panels' ) );
+		add_action( 'customize_register', 					array( $this, 'register_sections' ) );
+		add_action( 'customize_register', 					array( $this, 'register_fields' ) );
+		add_action( 'wp_head', 								array( $this, 'header_output' ) );
+		add_action( 'customize_preview_init', 				array( $this, 'live_preview' ) );
+		add_action( 'customize_controls_enqueue_scripts', 	array( $this, 'control_scripts' ) );
+		//add_action( 'customize_register', 					array( $this, 'load_customize_controls' ), 0 );
+
+	} // hooks()
+
+	/**
 	 * Registers custom panels for the Customizer
 	 *
 	 * @see			add_action( 'customize_register', $func )

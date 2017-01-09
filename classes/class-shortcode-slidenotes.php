@@ -24,6 +24,16 @@ class Decks_Shortcode_Slidenotes {
 	public function __construct() {}
 
 	/**
+	 * Registers all the WordPress hooks and filters for this class.
+	 */
+	public function hooks() {
+
+		add_shortcode( 'slidenotes',	array( $this, 'shortcode_slidenotes' ) );
+		add_action( 'slidenotes', 		array( $this, 'shortcode_slidenotes' ) );
+
+	} // hooks()
+
+	/**
 	 * Processes slidenotes shortcode.
 	 *
 	 * Attributes:

@@ -24,6 +24,16 @@ class Decks_Shortcode_Slidecode {
 	public function __construct() {}
 
 	/**
+	 * Registers all the WordPress hooks and filters for this class.
+	 */
+	public function hooks() {
+
+		add_shortcode( 'slidecode', array( $this, 'shortcode_slidecode' ) );
+		add_action( 'slidecode', 	array( $this, 'shortcode_slidecode' ) );
+
+	} // hooks()
+
+	/**
 	 * Processes slidecode shortcode.
 	 *
 	 * Attributes:

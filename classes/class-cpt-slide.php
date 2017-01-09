@@ -20,6 +20,20 @@ class Decks_CPT_Slide {
 	public function __construct() {} // __construct()
 
 	/**
+	 * Registers all the WordPress hooks and filters for this class.
+	 */
+	public function hooks() {
+
+		add_action( 'init', 								array( $this, 'new_cpt_slide' ) );
+		add_filter( 'manage_slide_posts_columns', 			array( $this, 'slide_register_columns' ) );
+		add_action( 'manage_slide_posts_custom_column', 	array( $this, 'slide_column_content' ), 10, 2 );
+		add_filter( 'manage_edit-slide_sortable_columns', 	array( $this, 'slide_sortable_columns' ), 10, 1 );
+		add_action( 'request', 								array( $this, 'slide_order_sorting' ), 10, 2 );
+		add_action( 'init', 								array( $this, 'add_image_sizes' ) );
+
+	} // hooks()
+
+	/**
 	 * Registers additional image sizes
 	 */
 	public function add_image_sizes() {
@@ -27,6 +41,60 @@ class Decks_CPT_Slide {
 		add_image_size( 'col-thumb', 75, 75, true );
 
 	} // add_image_sizes()
+
+	/**
+	 * Returns the appropriate preview item.
+	 * If the slide has a background image, it returns the thumbnail.
+	 * If the slide has a background color, it returns the color.
+	 * If the slide has a background video, it returns the video thumbnail.
+	 * If the slide has an iframe, it returns nothing.
+	 *
+	 * @exits 		If $post_id is empty or not an int.
+	 * @exits 		If
+	 * @return 		mixed 		The appropriate thumbnail markup.
+	 */
+	private function get_thumbnail_preview( $post_id ) {
+
+		if ( empty( $post_id ) || ! is_int( $post_id )  ) { return FALSE; }
+
+		$meta = get_post_custom( $post_id );
+
+		if (
+			empty( $meta ) ||
+			empty( $meta['bgtype'][0] ) ||
+			'none' === $meta['bgtype'][0] ||
+			'iframe' === $meta['bgtype'][0]
+		) { return FALSE; }
+
+		if ( 'image' === $meta['bgtype'][0] && has_post_thumbnail( $post_id ) ) {
+
+			return get_the_post_thumbnail( $post_id, 'col-thumb' );
+
+		}
+
+		if ( 'color' === $meta['bgtype'][0] && ! empty( $meta['bg-color'][0] ) ) {
+
+			$return = '';
+			$return .= '<div class="color-thumb" style="background-color:';
+			$return .= esc_attr( $meta['bg-color'][0] );
+			$return .= ';"></div>';
+
+			return $return;
+
+		}
+
+		if ( 'video' === $meta['bgtype'][0] && ! empty( $meta['video-url'][0] ) ) {
+
+			$return = '';
+			$return .= '<div class="video-thumb" style="background-image: url(';
+			$return .= esc_url( $meta['video-url'][0] );
+			$return .= ');"></div>';
+
+			return $return;
+
+		}
+
+	}
 
 	/**
 	 * Populates the custom columns with content.
@@ -42,19 +110,13 @@ class Decks_CPT_Slide {
 
 		if ( 'col-thumb' === $column_name ) {
 
-			$thumb = get_the_post_thumbnail( $post_id, 'col-thumb' );
+			$thumb = get_thumbnail_preview( $post_id );
 
-			echo $thumb;
+			if ( ! empty( $thumb ) ) {
 
-		}
+				echo $thumb;
 
-		if ( 'sortable-column' === $column_name ) {
-
-			$col = get_post_meta( $post_id, 'sortable-column', true );
-
-			echo '<a href="' . esc_url( get_edit_post_link( $post_id ) ) .  '">';
-			echo $col;
-			echo '</a>';
+			}
 
 		}
 
@@ -97,8 +159,8 @@ class Decks_CPT_Slide {
 	public function slide_register_columns( $columns ) {
 
 		$new['cb'] 				= '<input type="checkbox" />';
+		$new['title'] 			= __( 'Title' );
 		$new['thumbnail'] 		= __( 'Thumbnail', 'decks' );
-		$new['sortable-column'] = __( 'Sortable Column', 'decks' );
 		$new['date'] 			= __( 'Date' );
 
 		return $new;
@@ -114,7 +176,7 @@ class Decks_CPT_Slide {
 	 */
 	public function slide_sortable_columns( $sortables ) {
 
-		$sortables['sortable-column'] = 'display-order';
+		//$sortables['sortable-column'] = 'display-order';
 
 		return $sortables;
 

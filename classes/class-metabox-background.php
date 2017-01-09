@@ -57,6 +57,9 @@ class Decks_Metabox_Background {
 		$this->conditions['cap'] 		= 'edit_post';
 
 		$this->fields[] 	= array( 'bgtype', 'radio', 'none' );
+		$this->fields[] 	= array( 'bgtransition', 'select', 'default' );
+		$this->fields[] 	= array( 'bgtransitionout', 'select', 'default' );
+		$this->fields[] 	= array( 'bg-color', 'color', '#fff' );
 		$this->fields[] 	= array( 'bgsize', 'text', '' );
 		$this->fields[] 	= array( 'bgposition', 'text', '' );
 		$this->fields[] 	= array( 'bgrepeat', 'text', '' );
@@ -64,10 +67,20 @@ class Decks_Metabox_Background {
 		$this->fields[] 	= array( 'video-loop', 'checkbox', 0 );
 		$this->fields[] 	= array( 'video-muted', 'checkbox', 0 );
 		$this->fields[] 	= array( 'iframe-url', 'url', '' );
-		$this->fields[] 	= array( 'bgtransition', 'select', 'default' );
-		$this->fields[] 	= array( 'bgtransitionout', 'select', 'default' );
 
 	} // __construct()
+
+	/**
+	 * Registers all the WordPress hooks and filters for this class.
+	 */
+	public function hooks() {
+
+		add_action( 'add_meta_boxes', 			array( $this, 'add_metaboxes' ), 10, 2 );
+		add_action( 'add_meta_boxes', 			array( $this, 'set_meta' ), 10, 2 );
+		add_action( 'save_post', 				array( $this, 'validate_meta' ), 10, 2 );
+		add_action( 'edit_form_after_title', 	array( $this, 'promote_metaboxes' ), 10, 1 );
+
+	} // hooks()
 
 	/**
 	 * Registers metaboxes with WordPress

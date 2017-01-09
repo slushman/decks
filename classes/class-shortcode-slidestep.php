@@ -24,6 +24,16 @@ class Decks_Shortcode_Slidestep {
 	public function __construct() {}
 
 	/**
+	 * Registers all the WordPress hooks and filters for this class.
+	 */
+	public function hooks() {
+
+		add_shortcode( 'slidestep', array( $this, 'shortcode_slidestep' ) );
+		add_action( 'slidestep', 	array( $this, 'shortcode_slidestep' ) );
+
+	} // hooks()
+
+	/**
 	 * Processes slidestep shortcode.
 	 *
 	 * Attributes:

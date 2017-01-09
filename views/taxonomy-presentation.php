@@ -16,28 +16,21 @@
 		 *
 		 * All slides are hooked here.
 		 *
-		 * @hooked 			get_slides
+		 * @hooked 		get_slides
+		 * @param 		string 			$presentation 		The presentation slug.
 		 */
-		do_action( 'decks_slides' );
+		do_action( 'decks_slides', $presentation );
 
 		?></div><!-- .slides -->
-	</div><!-- .reveal -->
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/headjs/1.0.3/head.min.js"></script>
-	<script src="<?php echo esc_url( plugin_dir_url( dirname( __FILE__ ) ) ); ?>assets/js/reveal.min.js"></script>
-	<script>
-		Reveal.initialize({<?php
+	</div><!-- .reveal --><?php
 
-		/**
-		 * decks_initialize action hook
-		 *
-		 * All plugin settings are hooked here.
-		 *
-		 * @hooked
-		 */
-		do_action( 'decks_initialize', $presentation );
-
-		?>});
-	</script><?php
+	/**
+	 * decks_footer action hook
+	 *
+	 * @hooked 		initialize_reveal
+	 * @param 		string 			$presentation 		The presentation slug.
+	 */
+	do_action( 'decks_footer', $presentation );
 
 	wp_footer();
 
